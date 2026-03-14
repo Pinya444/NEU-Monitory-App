@@ -1,140 +1,138 @@
-# 📖 NEU Library – Visitor Management System
+# NEU MOA Monitoring System
 
-A web-based visitor management system for the **New Era University Library**, built with Next.js and Firebase. Library visitors can check in digitally, and admins can monitor visits, manage users, and block/unblock access — all in real time.
+A web-based Memorandum of Agreement (MOA) monitoring system for New Era University (NEU). This system tracks the approval status of MOAs entered by the university, with role-based access for students, faculty, and administrators.
 
-**Live Demo:** [neu-library-demo-project.vercel.app](https://neu-library-demo-project.vercel.app)
+## 🌐 Live Demo
+
+**[https://neu-monitory-app.vercel.app](https://neu-monitory-app.vercel.app)**
+
+---
+
+## 👥 User Roles
+
+| Role | Access |
+|------|--------|
+| **Admin** | Full access — manages users, MOAs, audit trails, deleted records |
+| **Faculty** | Views all active MOAs — can add/edit if granted permission by admin |
+| **Student** | Views approved MOAs only (company, address, contact info) |
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
-|---|---|
-| 🔐 Google Sign-In | NEU institutional accounts only (`@neu.edu.ph`) |
-| 🏫 Onboarding | First-time users select their college or office |
-| ✅ Check-In | Choose a visit purpose and log entry instantly |
-| 🎉 Welcome Screen | Confirmation page with countdown auto-redirect |
-| 📊 Admin Dashboard | Real-time stats, charts, visit trends |
-| 🔍 User Lookup | Search visitors by email, view history |
-| ⊘ Block System | Admins can block/unblock users with reasons |
-| 🛡️ Access Denied | Blocked users see a clear denial screen |
+### Dashboard
+- Statistics cards showing Active, Processing, Expiring, and Expired MOAs
+- MOA count breakdown by college
+- Filterable by college and date range
+
+### MOA Management
+- Add, edit, and soft-delete MOA entries
+- Recover deleted MOAs (admin only)
+- Full audit trail per MOA (who added, edited, or deleted and when)
+- General search bar (company, college, industry, contact, address, status)
+- Filter by college, industry, status, and date range
+
+### MOA Status Types
+| Status | Description |
+|--------|-------------|
+| ✅ APPROVED: Signed by President | Fully approved and signed |
+| ✅ APPROVED: On-going notarization | Approved, notarization in progress |
+| ✅ APPROVED: No notarization needed | Approved, no notarization required |
+| 🔄 PROCESSING: Awaiting HTE signature | Waiting for HTE partner to sign |
+| 🔄 PROCESSING: Sent to Legal Office | MOA draft under legal review |
+| 🔄 PROCESSING: Sent to VPAA/OP | Awaiting VPAA/OP approval |
+| ❌ EXPIRED | MOA expired with no renewal |
+| ⚠️ EXPIRING | Expiring within 2 months |
+
+### User Management (Admin Only)
+- View all registered users
+- Assign roles (Admin, Faculty, Student)
+- Grant/revoke faculty MOA maintenance permissions
+- Block/unblock users from the system
+
+### Access Control
+- Students only see APPROVED MOAs
+- Faculty sees all active MOAs (except audit trails)
+- Admin sees all records including deleted rows and audit trails
+- No hard deletes — all deletions are soft deletes recoverable by admin
 
 ---
 
-## 🛠 Tech Stack
+## 🛠️ Tech Stack
 
-- **Framework:** Next.js 15 (App Router)
-- **Auth & Database:** Firebase (Authentication + Firestore)
-- **Styling:** Tailwind CSS
-- **Language:** TypeScript
-- **Deployment:** Vercel
+- **Frontend:** React + Vite
+- **Authentication:** Firebase Auth (Google Sign-In)
+- **Database:** Firebase Firestore
+- **Hosting:** Vercel
+- **Version Control:** GitHub
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
+### Prerequisites
+- Node.js v18+
+- A Firebase project with Firestore and Google Auth enabled
+- A Google account with an NEU institutional email
+
+### Installation
+
+1. Clone the repository:
 ```bash
-git clone https://github.com/Pinya444/NEU-Library-DEMO-Project.git
-cd NEU-Library-DEMO-Project
+git clone https://github.com/Pinya444/NEU-Monitory-App.git
+cd NEU-Monitory-App/NEU-Monitory-App
+```
+
+2. Install dependencies:
+```bash
 npm install
 ```
 
-### 2. Set up Firebase
-1. Go to [console.firebase.google.com](https://console.firebase.google.com) and create a project
-2. Enable **Authentication → Google Sign-In**
-3. Create a **Firestore Database** (production mode, `asia-southeast1`)
-4. Register a **Web App** and copy the config keys
-
-### 3. Configure environment variables
-```bash
-cp .env.local.example .env.local
-```
-Fill in your Firebase keys in `.env.local`:
-```
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_FIREBASE_APP_ID=
+3. Create a `.env.local` file in the project root:
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
 ```
 
-### 4. Deploy Firestore rules
-```bash
-npm install -g firebase-tools
-firebase login
-firebase use --add
-firebase deploy --only firestore:rules,firestore:indexes
-```
-
-### 5. Run the app
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
 ---
 
-## 👤 Setting Your First Admin
+## 🔐 Firebase Setup
 
-1. Sign in to the app with your NEU Google account
-2. Go to **Firebase Console → Firestore → users collection**
-3. Find your document (by UID)
-4. Change `role: "user"` → `role: "admin"`
-5. Sign out and sign back in — you'll be redirected to the admin dashboard
+1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+2. Enable **Google Sign-In** under Authentication → Sign-in method
+3. Create a **Firestore Database** (region: asia-southeast1)
+4. Add your domain to **Authentication → Settings → Authorized domains**
+5. Set Firestore rules to restrict access by role
 
 ---
 
 ## 📁 Project Structure
-
 ```
 src/
-├── app/
-│   ├── login/          # Sign-in page
-│   ├── onboarding/     # College/office setup
-│   ├── checkin/        # Visit logging
-│   ├── welcome/        # Post check-in confirmation
-│   └── dashboard/
-│       └── admin/      # Admin dashboard
-├── components/
-│   ├── admin/          # Charts, modals, search panel
-│   └── ui/             # Shared UI components
-├── hooks/              # useAuth, useVisitLog, useAdminDashboard, useBlockAction
-├── lib/                # Firebase, userService, visitLogService, adminService, blockService
-└── types/              # TypeScript interfaces
+├── firebase/
+│   ├── config.js      # Firebase initialization
+│   └── seed.js        # Sample data seeder
+└── App.jsx            # Main application component
 ```
 
 ---
 
-## 🔒 Security Model
+## 👨‍💻 Developer
 
-- Firestore rules enforce role-based access — admins and users have separate read/write permissions
-- Client-side `AuthGuard` redirects unauthorized users
-- Block status is checked on every check-in attempt
-- Only `@neu.edu.ph` Google accounts can sign in
-
----
-
-## 📜 Available Scripts
-
-| Command | Description |
-|---|---|
-| `npm run dev` | Start local development server |
-| `npm run build` | Build for production |
-| `npm run lint` | Run ESLint |
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m 'feat: add your feature'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a Pull Request against `main`
+**Angelo Joseph P. Cruz**
+New Era University — College of Computer Studies (CCS)
 
 ---
 
 ## 📄 License
 
-This project was built for academic purposes at **New Era University**.
+This project is developed for academic and institutional use at New Era University.
